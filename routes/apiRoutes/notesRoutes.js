@@ -17,14 +17,16 @@ router.delete('/notes/:id', (req, res) => {
     res.json(notesDatabase);
 });
 
-// post new note
+// new note
 router.post('/notes', (req, res) => {
+  //if rules are not met, error message
   if (!validateNote(req.body)) {
     res.status(400).send('This note is not properly formatted.');
   } else {
+    //else it creates the note and adds it to the html and db
     const note = createNewNote(req.body, notesDatabase);
     res.json(note);
   }
 });
-
+//exports module
 module.exports = router;

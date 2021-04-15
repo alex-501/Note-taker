@@ -1,16 +1,21 @@
+//routes
+
 const path = require('path');
 const router = require('express').Router();
+//GET method requests
 
-router.get('/', (req, res) => {
+//Send method- for short strings
+//requests data from index.html
+router.get('/', (_req, res) => {
   res.sendFile(path.join(__dirname, '../../public/index.html'));
 });
-
-router.get('/notes', (req, res) => {
+//request data from notes.html
+router.get('/notes', (_req, res) => {
   res.sendFile(path.join(__dirname, '../../public/notes.html'));
 });
-
-router.get('*', (req, res) => {
+//requests data from index.html
+router.get('*', (_req, res) => {
   res.sendFile(path.join(__dirname, '../../public/index.html'));
 });
-
+//helps require statement acquire exported data and objects
 module.exports = router;
