@@ -1,32 +1,78 @@
 const router = require('express').Router();
-const { createNewNote, deleteNote, filterByQuery, validateNote } = require('../../lib/notes');
-const notesDatabase = require('../../db/db.json');
+const {notes} = require('../../db/db.json');
+const fs = require("fs");
+const path = require("path");
+const { nanoid } = require('nanoid');
 
-// get notes
+
+//filter by query
+function filterByQuery(query, notesArray) {
+    let filteredResults = notesArray;
+
+    if (query.title) {
+      filteredResults = filteredResults.filter(note => note.title === query.title);}
+    return filteredResults;}
+
+function findById(id, notesArray) {
+    const result = notesArray.filter(note => note.id == id)[0];
+    return result;}
+function createNewNote(body, notesArray) {
+    const note = body;
+    note.id = nanoid();
+    notesArray.push(note);
+    fs.writeFileSync(
+      path.join(__dirname, '../../db/db.json'),
+      JSON.stringify({ notes: notesArray }, null, 2) );
+
+    return note;}
+
+function writeOverNotes(notesArray) {
+    fs.writeFileSync(
+        path.join(__dirname, '../../db/db.json'),
+        JSON.stringify({ notes: notesArray }, null, 2));};
+
+
+function validateNote(note) {
+    if (!note.title || typeof note.title !== 'string') 
+    {  return false;}
+    return true;}
+//get
 router.get('/notes', (req, res) => {
-  let results = notesDatabase;
-  if (req.query) {
-    results = filterByQuery(req.query, results);
-  }
-  res.json(results);
-});
+  let results = notes;
+  if (req.query) 
+  { results = filterByQuery(req.query, results);}
+  res.json(results);});
 
-// delete  by id  &&&&&&&&&&
-router.delete('/notes/:id', (req, res) => {
-    deleteNote(req.params.id, notesDatabase);
-    res.json(notesDatabase);
-});
 
-// new note
+//get note route
+router.get('/notes/:id', (req, res) => {
+  const result = findById(req.params.id, notes);
+  if (result) 
+  {  res.json(result);}
+
+  else {
+    res.status(404).send('The id does not exist in the notes');}});
+
+
+//post route
 router.post('/notes', (req, res) => {
-  //if rules are not met, error message
-  if (!validateNote(req.body)) {
-    res.status(400).send('This note is not properly formatted.');
-  } else {
-    //else it creates the note and adds it to the html and db
-    const note = createNewNote(req.body, notesDatabase);
-    res.json(note);
-  }
+if (!validateNote(req.body)) { res.status(400).send('Error400');}
+ else 
+ {   const note = createNewNote(req.body, notes);
+    res.json(note); }});
+
+
+//delete  route
+router.delete('/notes/:id', (req, res) => {
+    const result = notes;
+
+    if (req.params.id) {
+      for (i = 0; i < result.length; i++) {
+      if (result[i].id == req.params.id) {
+      result.splice(i, 1); } }  } 
+
+    writeOverNotes(result);
+    res.json(result);
 });
-//exports module
-module.exports = router;
+
+module.exports  = router;
