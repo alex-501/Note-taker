@@ -1,14 +1,14 @@
 
 
-//define noteTitle, noteText, saveNote, newNote and noteString
-let noteTitle; let noteText; let SaveNote;let newNoteBtn; let noteString;
+//define noteTitle, noteText, saveNote, newNote and noteList
+let noteTitle; let noteText; let SaveNote;let newNoteBtn; let noteList;
 
 if (window.location.pathname === '/notes') {
   noteTitle = document.querySelector('.note-title');
   noteText = document.querySelector('.note-textarea');
   SaveNote = document.querySelector('.save-note');
   newNoteBtn = document.querySelector('.new-note');
-  noteString = document.querySelectorAll('.list-container .list-group');}
+  noteList = document.querySelectorAll('.list-container .list-group');}
 
 
   //show, hide, & get notes
@@ -79,15 +79,15 @@ const handleRenderSaveBtn = () => {
 //gets notes contents
 
 
-const rendernoteString = async (notes) => {
+const rendernoteList = async (notes) => {
   let jsonNotes = await notes.json();
-  console.log("in rendernoteString", jsonNotes);
+  console.log("in rendernoteList", jsonNotes);
   console.group("window.location.pathname", window.location.pathname);
   console.log("jsonNotes.length", jsonNotes.length)
   if (window.location.pathname === '/notes') {
-    noteString.forEach((el) => (el.innerHTML = ''));  }
+    noteList.forEach((el) => (el.innerHTML = ''));  }
 
-  let noteStringItems = [];
+  let noteListItems = [];
   const createLi = (text, delBtn = true) => {
     const liEl = document.createElement('li');
     liEl.classList.add('list-group-item');
@@ -106,17 +106,17 @@ const spanEl = document.createElement('span');
     return liEl;};
 
   if (jsonNotes.length === 0) {
-    noteStringItems.push(createLi('No saved Notes', false));}
+    noteListItems.push(createLi('No saved Notes', false));}
 
   jsonNotes.forEach((note) => {
     const li = createLi(note.title);
-    li.dataset.note = JSON.stringify(note); noteStringItems.push(li);});
+    li.dataset.note = JSON.stringify(note); noteListItems.push(li);});
 
   if (window.location.pathname === '/notes') {
-    noteStringItems.forEach((note) => noteString[0].append(note));}};
+    noteListItems.forEach((note) => noteList[0].append(note));}};
 
 
-const getAndRenderNotes = () => getNotes().then(rendernoteString);
+const getAndRenderNotes = () => getNotes().then(rendernoteList);
 if ( window .location .pathname === '/notes') 
 {  SaveNote.addEventListener('click', handleNoteSave);  newNoteBtn.addEventListener('click', handleNewNoteView);
   noteTitle.addEventListener('keyup', handleRenderSaveBtn);  noteText.addEventListener('keyup', handleRenderSaveBtn);}
