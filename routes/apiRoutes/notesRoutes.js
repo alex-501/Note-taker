@@ -12,19 +12,6 @@ function filterByQuery(query, notesArray) {
       filteredResults = filteredResults.filter(note => note.title === query.title);}
     return filteredResults;}
 
-function findById(id, notesArray) {
-    const result = notesArray.filter(note => note.id == id)[0];
-    return result;}
-function createNewNote(body, notesArray) {
-    const note = body;
-    note.id = nanoid();
-    notesArray.push(note);
-    fs.writeFileSync(
-      path.join(__dirname, './../db/db.json'),
-      JSON.stringify({ notes: notesArray }, null, 2) );
-
-    return note;}
-
 function writeOverNotes(notesArray) {
     fs.writeFileSync(
         path.join(__dirname, './../db/db.json'),
